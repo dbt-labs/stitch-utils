@@ -48,17 +48,17 @@
         {%- for col in group.list -%}
             {%- if col.datatype == 'BO' -%}
             case {{col.name}}
-                when true then 'true'::varchar
-                when false then 'false'::varchar
+                when true then cast('true' as {{dbt_utils.type_string()}})
+                when false then cast('false' as {{dbt_utils.type_string()}})
                 else null end
             {%- else -%}
-            {{col.name}}::varchar
+            cast({{col.name}} as {{dbt_utils.type_string()}})
             {%- endif -%}{% if not loop.last %}, {% endif %}
         {%- endfor -%}
         ) as {{ group.grouper }}
     {%- endfor %}
 
-    {% if db_name is not none -%}
+    {% if database is not none -%}
         from {{database}}.{{schema_name}}.{{table_name}}
     {%- else -%}
         from {{schema_name}}.{{table_name}}

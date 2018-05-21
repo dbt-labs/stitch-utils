@@ -10,7 +10,7 @@ The argument `from` takes a Stitch-loaded table, either:
 * by dbt ref statement
 
 E.g. If a Stitch-loaded table contains columns `field__fl` and `field__st`,
-this macro will return a string-casted column `field`.
+this macro will return a `select` statement wiht a combined column `field` of type string.
 
 Usage:
 

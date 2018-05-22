@@ -58,7 +58,7 @@
         ) as {{ group.grouper }}
     {%- endfor %}
 
-    {% if database is not none -%}
+    {% if database -%}
         from {{database}}.{{schema_name}}.{{table_name}}
     {%- else -%}
         from {{schema_name}}.{{table_name}}

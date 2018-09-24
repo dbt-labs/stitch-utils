@@ -7,10 +7,13 @@ loading.
 
 The argument `from` takes a Stitch-loaded table, either:
 * by schema, table, and database (optional)
-* by dbt ref statement
+* by dbt `ref()` expression
 
 E.g. If a Stitch-loaded table contains columns `field__fl` and `field__st`,
-this macro will return a `select` statement wiht a combined column `field` of type string.
+this macro will return a `select` statement with a combined column `field` of type string.
+
+Update [9/24]: This macro will also return a combined string-type column `field`
+if a table contains both `field` and `field__type`.
 
 Usage:
 

@@ -10,11 +10,11 @@
         {%- set schema_name, table_name = (from | string).split(".") -%}
     {%- endif -%}
 
-    select
-
     {%- set cols = adapter.get_columns_in_table(schema_name, table_name, database) -%}
     {%- set cols_to_coalesce = [] -%}
+    {%- set colnames_tofix = [] -%}
     {%- set clean_cols = [] -%}
+    {%- set finals = [] -%}
 
     {%- for col in cols -%}
 
@@ -31,37 +31,56 @@
                   'name_without_datatype' : name_without_datatype
                 }
                 ) -%}
+                
+            {%- set _ = colnames_tofix.append(name_without_datatype) -%}
 
         {%- else %}
             {%- set _ = clean_cols.append(col) -%}
         {%- endif -%}
     {%- endfor -%}
 
-
     {%- for col in clean_cols %}
-        {{col.column}}{% if not loop.last %},{% endif %}
+        {%- if col.column not in colnames_tofix %}
+            {%- set _ = finals.append(col.column) -%}
+        {% else -%}
+            {%- set _ = cols_to_coalesce.append(
+                { 'name' : col.column | string,
+                  'datatype' : 'ST',
+                  'name_without_datatype' : col.column | string
+                }
+                ) -%}
+        {% endif -%}
     {% endfor %}
 
 
     {%- for group in cols_to_coalesce|groupby('name_without_datatype') %}
-        , coalesce(
-        {%- for col in group.list -%}
-            {%- if col.datatype == 'BO' -%}
-            case {{col.name}}
-                when true then cast('true' as {{dbt_utils.type_string()}})
-                when false then cast('false' as {{dbt_utils.type_string()}})
-                else null end
-            {%- else -%}
-            cast({{col.name}} as {{dbt_utils.type_string()}})
-            {%- endif -%}{% if not loop.last %}, {% endif %}
-        {%- endfor -%}
-        ) as {{ group.grouper }}
+        {%- set colexp -%}
+            coalesce(
+            {%- for col in group.list -%}
+                {%- if col.datatype == 'BO' %}
+                case {{col.name}}
+                    when true then cast('true' as {{dbt_utils.type_string()}})
+                    when false then cast('false' as {{dbt_utils.type_string()}})
+                    else null end
+                {% else %}
+                cast({{col.name}} as {{dbt_utils.type_string()}}){%- endif -%}{{"," if not loop.last}}
+            {% endfor -%}
+            ) as {{ group.grouper }}
+        {%- endset -%}
+        {%- set _ = finals.append(colexp) -%}
     {%- endfor %}
+    
+    
+select
 
-    {% if database -%}
-        from {{database}}.{{schema_name}}.{{table_name}}
-    {%- else -%}
-        from {{schema_name}}.{{table_name}}
-    {%- endif %}
+    {% for final in finals %}
+    {{final}}{{"," if not loop.last}}
+    {% endfor %}
+
+{% if database -%}
+    from {{database}}.{{schema_name}}.{{table_name}}
+{%- else -%}
+    from {{schema_name}}.{{table_name}}
+{%- endif %}
 
 {% endmacro %}

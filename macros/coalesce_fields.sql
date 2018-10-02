@@ -1,4 +1,4 @@
-{# Adapted from original version by Tristan and Erica #}
+{# Adapted from original version by @jthandy and @ericalouie #}
 
 {% macro coalesce_fields(table) %}
 

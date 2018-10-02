@@ -1,16 +1,20 @@
 {# Adapted from original version by Tristan and Erica #}
 
-{% macro coalesce_fields(from) %}
+{% macro coalesce_fields(table) %}
 
-    {%- if from.name -%}
-        {%- set schema_name, table_name = from.schema, from.name -%}
-    {%- elif ((from | string).split(".") | length ) == 3 -%}
-        {%- set database, schema_name, table_name = (from | string).split(".") -%}
+    {%- if table.name -%}
+        {%- set schema_name, table_name = table.schema, table.name -%}
+    {%- elif ((table | string).split(".") | length ) == 3 -%}
+        {%- set database, schema_name, table_name = (table | string).split(".") -%}
     {%- else -%}
-        {%- set schema_name, table_name = (from | string).split(".") -%}
+        {%- set schema_name, table_name = (table | string).split(".") -%}
     {%- endif -%}
 
-    {%- set cols = adapter.get_columns_in_table(schema_name, table_name, database) -%}
+    {%- if database -%}
+        {%- set cols = adapter.get_columns_in_table(schema_name, table_name, database) -%}
+    {%- else -%}
+        {%- set cols = adapter.get_columns_in_table(schema_name, table_name) -%}
+    {%- endif -%}
     {%- set cols_to_coalesce = [] -%}
     {%- set colnames_tofix = [] -%}
     {%- set clean_cols = [] -%}
@@ -27,7 +31,7 @@
 
             {%- set _ = cols_to_coalesce.append(
                 { 'name' : col.column | string,
-                  'datatype' : datatype,
+                  'datatype' : datatype | lower,
                   'name_without_datatype' : name_without_datatype
                 }
                 ) -%}
@@ -45,7 +49,7 @@
         {% else -%}
             {%- set _ = cols_to_coalesce.append(
                 { 'name' : col.column | string,
-                  'datatype' : 'ST',
+                  'datatype' : 'st',
                   'name_without_datatype' : col.column | string
                 }
                 ) -%}
@@ -57,10 +61,10 @@
         {%- set colexp -%}
             coalesce(
             {%- for col in group.list -%}
-                {%- if col.datatype == 'BO' %}
-                case {{col.name}}
-                    when true then cast('true' as {{dbt_utils.type_string()}})
-                    when false then cast('false' as {{dbt_utils.type_string()}})
+                {%- if col.datatype == 'bo' %}
+                case
+                    when {{col.name}} = true then cast('true' as {{dbt_utils.type_string()}})
+                    when {{col.name}} = false then cast('false' as {{dbt_utils.type_string()}})
                     else null end
                 {% else %}
                 cast({{col.name}} as {{dbt_utils.type_string()}}){%- endif -%}{{"," if not loop.last}}
@@ -77,10 +81,6 @@ select
     {{final}}{{"," if not loop.last}}
     {% endfor %}
 
-{% if database -%}
-    from {{database}}.{{schema_name}}.{{table_name}}
-{%- else -%}
-    from {{schema_name}}.{{table_name}}
-{%- endif %}
+from {{table}}
 
 {% endmacro %}

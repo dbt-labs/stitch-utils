@@ -1,0 +1,4 @@
+test_coalesce_fields:
+    constraints:
+        dbt_utils.equality:
+            - ref('data_coalesce_fields_expected')

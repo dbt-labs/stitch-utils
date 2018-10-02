@@ -1,3 +1,4 @@
+
 test_coalesce_fields:
     constraints:
         dbt_utils.equality:

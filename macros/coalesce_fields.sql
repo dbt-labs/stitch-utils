@@ -2,7 +2,7 @@
 
 {% macro coalesce_fields(relation) %}
 
-    {%- set cols = adapter.get_columns_in_relation(relation) -%}
+    {%- set cols = get_columns_in_relation(relation) -%}
     {%- set cols_to_coalesce = [] -%}
     {%- set colnames_tofix = [] -%}
     {%- set clean_cols = [] -%}
@@ -59,7 +59,6 @@
         {%- set column_exp -%}
             coalesce(
             {%- for column in group.list -%}
-                -- {{column.name}}, {{column.datatype}}
                 {#- handle booleans with especial care -#}
                 {%- if column.datatype == 'boolean' %}
                 case

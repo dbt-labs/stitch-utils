@@ -1,4 +1,4 @@
-id,numeral
-1,"1"
-2,"one"
-3,"true"
+id,numeral,version
+1,"1","pi"
+2,"one","3.14"
+3,"true",

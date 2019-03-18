@@ -1,0 +1,7 @@
+version: 2
+models:
+
+  - name: test_coalesce_fields
+    tests:
+      - dbt_utils.equality:
+          compare_model: ref('data_coalesce_fields_expected')

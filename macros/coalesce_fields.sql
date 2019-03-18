@@ -1,67 +1,85 @@
-{# Adapted from original version by Tristan and Erica #}
+{# Adapted from original version by @jthandy and @ericalouie #}
 
-{% macro coalesce_fields(from) %}
+{% macro coalesce_fields(relation) %}
 
-    {%- if from.name -%}
-        {%- set schema_name, table_name = from.schema, from.name -%}
-    {%- elif ((from | string).split(".") | length ) == 3 -%}
-        {%- set database, schema_name, table_name = (from | string).split(".") -%}
-    {%- else -%}
-        {%- set schema_name, table_name = (from | string).split(".") -%}
-    {%- endif -%}
-
-    select
-
-    {%- set cols = adapter.get_columns_in_table(schema_name, table_name, database) -%}
+    {%- set cols = get_columns_in_relation(relation) -%}
     {%- set cols_to_coalesce = [] -%}
+    {%- set colnames_tofix = [] -%}
     {%- set clean_cols = [] -%}
+    {%- set finals = [] -%}
 
     {%- for col in cols -%}
 
+        {#- Stitch-synced duplicate columns are named `field__datatype` or 
+        `field__dt`, where dt = abbreviated datatype -#}
         {%- if '__' in col.column -%}
 
-            {%- set name_without_datatype, datatype =
-                "__".join(col.column.split('__')[:-1]),
-                col.column.split('__')[-1]
-                %}
+            {%- set col_split = col.column.split('__') -%}
+            {%- set name_without_datatype = col_split[:-1][0] -%}
 
-            {%- set _ = cols_to_coalesce.append(
-                { 'name' : col.column | string,
-                  'datatype' : datatype,
-                  'name_without_datatype' : name_without_datatype
+            {%- set column = 
+                {
+                    'name' : col.column | string,
+                    'datatype' : col.data_type,
+                    'name_without_datatype' : name_without_datatype
                 }
-                ) -%}
+            -%}
+
+            {#- keep lists of columns to fix -#}
+            {%- do cols_to_coalesce.append(column) -%}
+            {%- do colnames_tofix.append(name_without_datatype) -%}
 
         {%- else %}
             {%- set _ = clean_cols.append(col) -%}
         {%- endif -%}
     {%- endfor -%}
 
-
     {%- for col in clean_cols %}
-        {{col.column}}{% if not loop.last %},{% endif %}
+        {#- check clean column name against coalesce output and 
+        add all unduplicated, unmatched columns to final list -#}
+        {%- if col.column not in colnames_tofix %}
+            {%- do finals.append(col.column) -%}
+        {% else -%}
+        {#- if clean column has datatyped cousin, add to list for fixing -#}
+            {%- set column = 
+                {
+                    'name' : col.column | string,
+                    'datatype' : col.data_type,
+                    'name_without_datatype' : col.column | string
+                }
+            -%}
+            
+            {%- set _ = cols_to_coalesce.append(column) -%}
+        {% endif -%}
     {% endfor %}
 
-
+    {#- group duplicate columns by their cleaned name -#}
     {%- for group in cols_to_coalesce|groupby('name_without_datatype') %}
-        , coalesce(
-        {%- for col in group.list -%}
-            {%- if col.datatype == 'BO' -%}
-            case {{col.name}}
-                when true then cast('true' as {{dbt_utils.type_string()}})
-                when false then cast('false' as {{dbt_utils.type_string()}})
-                else null end
-            {%- else -%}
-            cast({{col.name}} as {{dbt_utils.type_string()}})
-            {%- endif -%}{% if not loop.last %}, {% endif %}
-        {%- endfor -%}
-        ) as {{ group.grouper }}
+        {#- add print-ready coalesce statement to final list -#}
+        {%- set column_exp -%}
+            coalesce(
+            {%- for column in group.list -%}
+                {#- handle booleans with especial care -#}
+                {%- if column.datatype == 'boolean' %}
+                case
+                    when {{column.name}} = true then cast('true' as {{dbt_utils.type_string()}})
+                    when {{column.name}} = false then cast('false' as {{dbt_utils.type_string()}})
+                    else null end
+                {% else %}
+                cast({{column.name}} as {{dbt_utils.type_string()}}){%- endif -%}{{- "," if not loop.last -}}
+            {% endfor -%}
+            ) as {{ group.grouper }}
+        {%- endset -%}
+        {%- do finals.append(column_exp) -%}
     {%- endfor %}
+    
+    
+select
 
-    {% if database -%}
-        from {{database}}.{{schema_name}}.{{table_name}}
-    {%- else -%}
-        from {{schema_name}}.{{table_name}}
-    {%- endif %}
+    {% for final in finals %}
+    {{final}}{{- ',' if not loop.last -}}
+    {% endfor %}
+
+from {{relation}}
 
 {% endmacro %}

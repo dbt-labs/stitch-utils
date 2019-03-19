@@ -19,9 +19,9 @@
 
             {%- set column = 
                 {
-                    'name' : col.column | string,
+                    'name' : adapter.quote(col.column | string),
                     'datatype' : col.data_type,
-                    'name_without_datatype' : name_without_datatype
+                    'name_without_datatype' : adapter.quote(name_without_datatype)
                 }
             -%}
 
@@ -43,9 +43,9 @@
         {#- if clean column has datatyped cousin, add to list for fixing -#}
             {%- set column = 
                 {
-                    'name' : col.column | string,
+                    'name' : adapter.quote(col.column | string),
                     'datatype' : col.data_type,
-                    'name_without_datatype' : col.column | string
+                    'name_without_datatype' : adapter.quote(col.column | string)
                 }
             -%}
             

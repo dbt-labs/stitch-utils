@@ -1,4 +1,4 @@
-id,numeral,version
-1,"1","pi"
-2,"one","3.14"
-3,"true",
+"id","numeral","version","""bad column""","""bad column with type"""
+1,"1","pi","testy","zero"
+2,"one","3.14","testoh","0"
+3,"true",,"testah","nil"

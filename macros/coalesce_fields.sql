@@ -38,7 +38,8 @@
         {#- check clean column name against coalesce output and 
         add all unduplicated, unmatched columns to final list -#}
         {%- if col.column not in colnames_tofix %}
-            {%- do finals.append(col.column) -%}
+            {%- set clean_col = adapter.quote(col.column) -%}
+            {%- do finals.append(clean_col) -%}
         {% else -%}
         {#- if clean column has datatyped cousin, add to list for fixing -#}
             {%- set column = 

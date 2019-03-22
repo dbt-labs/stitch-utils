@@ -5,7 +5,7 @@
 This macro coalesces fields that Stitch splits by datatype as a result of incremental
 loading.
 
-The argument `from` takes a Stitch-loaded table relation, either:
+The argument `relation` takes a Stitch-loaded table relation, either:
 * by dbt `source()` expression
 * by dbt `ref()` expression
 * by calling dbt function `adapter.get_relation(schema_name, table_name)`

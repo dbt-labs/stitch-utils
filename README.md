@@ -16,5 +16,5 @@ this macro will return a `select` statement with a combined column `field` of ty
 Usage:
 
 ```sql
-{{ stitch_utils.coalesce_fields(from = source('stitch','table_name')) }}
+{{ stitch_utils.coalesce_fields(relation = source('stitch','table_name')) }}
 ```

@@ -1,4 +1,4 @@
-id,numeral,numeral__st,numeral__bo,version__string,version__double
-1,1,,,pi,
-2,,one,,,3.14
-3,,,TRUE,,
+"id","numeral","numeral__st","numeral__bo","version__string","version__double","""bad column""","""bad column with type__string""","""bad column with type__int"""
+1,1,,,pi,,testy,zero,
+2,,one,,,3.14,testoh,,0
+3,,,TRUE,,,testah,nil,

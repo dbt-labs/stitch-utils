@@ -4,11 +4,11 @@ This directory contains an example dbt project which tests the macros in the `st
 
 For an example integration tests, check out the tests for the `coalesce_fields` macro:
 
-1. [Macro definition](https://github.com/fishtown-analytics/stitch-utils/blob/master/macros/coalesce_fields.sql)
-2. [Seed file with fake data](https://github.com/fishtown-analytics/stitch-utils/blob/master/integration_tests/data/data_coalesce_fields.csv)
-3. [Model to test the macro](https://github.com/fishtown-analytics/stitch-utils/blob/master/integration_tests/models/test_coalesce_fields.sql)
-4. [A schema test to assert the macro works as expected](https://github.com/fishtown-analytics/stitch-utils/blob/master/integration_tests/models/schema.yml#L2)
-by [asserting equality](https://github.com/fishtown-analytics/dbt-utils/blob/master/macros/schema_tests/equality.sql) with an [expected output](https://github.com/fishtown-analytics/stitch-utils/blob/master/integration_tests/data/data_coalesce_fields_expected.csv)
+1. [Macro definition](macros/coalesce_fields.sql)
+2. [Seed file with fake data](data/data_coalesce_fields.csv)
+3. [Model to test the macro](integration_tests/models/test_coalesce_fields.sql)
+4. [A schema test to assert the macro works as expected](integration_tests/models/schema.yml#L2)
+by [asserting equality](macros/schema_tests/equality.sql) with an [expected output](integration_tests/data/data_coalesce_fields_expected.csv)
 
 
 Once you've added all of these files, you should be able to run:

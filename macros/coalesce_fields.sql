@@ -9,28 +9,40 @@
     {%- set finals = [] -%}
 
     {%- for col in cols -%}
+    
+        {%- set status = 'innocent' -%}
 
         {#- Stitch-synced duplicate columns are named `field__datatype` or 
         `field__dt`, where dt = abbreviated datatype -#}
         {%- if '__' in col.column -%}
 
             {%- set col_split = col.column.split('__') -%}
-            {%- set name_without_datatype = col_split[:-1][0] -%}
+            {%- if col_split|length > 1 and col_split[-1]|lower in (
+                'bl','st','it','bigint','string','double','boolean'
+            ) -%}
+            
+                {%- set status = 'guilty' -%}
+                
+                {%- set name_without_datatype = col_split[:-1][0] -%}
 
-            {%- set column = 
-                {
-                    'name' : adapter.quote(col.column | string),
-                    'datatype' : col.data_type,
-                    'name_without_datatype' : adapter.quote(name_without_datatype)
-                }
-            -%}
+                {%- set column = 
+                    {
+                        'name' : adapter.quote(col.column | string),
+                        'datatype' : col.data_type,
+                        'name_without_datatype' : adapter.quote(name_without_datatype)
+                    }
+                -%}
 
-            {#- keep lists of columns to fix -#}
-            {%- do cols_to_coalesce.append(column) -%}
-            {%- do colnames_tofix.append(name_without_datatype) -%}
+                {#- keep lists of columns to fix -#}
+                {%- do cols_to_coalesce.append(column) -%}
+                {%- do colnames_tofix.append(name_without_datatype) -%}
+            
+            {%- endif -%}
 
-        {%- else %}
-            {%- set _ = clean_cols.append(col) -%}
+        {%- endif %}
+        
+        {%- if status == 'innocent' -%}
+            {%- do clean_cols.append(col) -%}
         {%- endif -%}
     {%- endfor -%}
 
@@ -50,7 +62,7 @@
                 }
             -%}
             
-            {%- set _ = cols_to_coalesce.append(column) -%}
+            {%- do cols_to_coalesce.append(column) -%}
         {% endif -%}
     {% endfor %}
 

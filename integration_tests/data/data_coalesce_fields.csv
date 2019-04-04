@@ -1,4 +1,4 @@
-id,numeral,numeral__st,numeral__bo,version__string,version__double
-1,1,,,pi,
-2,,one,,,3.14
-3,,,TRUE,,
+id,numeral,numeral__st,numeral__bl,version__string,version__double,__red_herring
+1,1,,,pi,,not
+2,,one,,,3.14,this
+3,,,TRUE,,,one

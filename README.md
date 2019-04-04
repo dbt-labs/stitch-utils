@@ -8,7 +8,8 @@ loading.
 The argument `relation` takes a Stitch-loaded table relation, either:
 * by dbt `source()` expression
 * by dbt `ref()` expression
-* by calling dbt function `adapter.get_relation(schema_name, table_name)`
+* by calling dbt adapter function `adapter.get_relation(schema_name, table_name)` or
+`api.Relation.create(identifier, schema, database,  type='table')`
 
 If a Stitch-loaded table contains columns `field`, `field__fl`, and `field__st`,
 this macro will return a `select` statement with a combined column `field` of type string.

@@ -1,4 +1,4 @@
-id,numeral,numeral__st,numeral__bl,version__string,version__double,properties__numeral__st,properties__numeral__bl,__red_herring
-1,1,,,pi,,1,not
-2,,one,,,3.14,one,this
-3,,,TRUE,,,,,one
+id,numeral,numeral__st,numeral__bl,version__string,version__double,properties__numeral,properties__numeral__st,properties__numeral__bl,__red_herring
+1,1,,,pi,,1,,,not
+2,,one,,,3.14,,one,,this
+3,,,TRUE,,,,,TRUE,one

@@ -9,10 +9,10 @@
     {%- set finals = [] -%}
 
     {%- for col in cols -%}
-    
+
         {%- set status = 'innocent' -%}
 
-        {#- Stitch-synced duplicate columns are named `field__datatype` or 
+        {#- Stitch-synced duplicate columns are named `field__datatype` or
         `field__dt`, where dt = abbreviated datatype -#}
         {%- if '__' in col.column -%}
 
@@ -20,12 +20,12 @@
             {%- if col_split|length > 1 and col_split[-1]|lower in (
                 'fl','bl','st','it','bigint','string','double','boolean'
             ) -%}
-            
-                {%- set status = 'guilty' -%}
-                
-                {%- set name_without_datatype = col_split[:-1][0] -%}
 
-                {%- set column = 
+                {%- set status = 'guilty' -%}
+
+                {%- set name_without_datatype = col_split[:-1]|join('__') -%}
+
+                {%- set column =
                     {
                         'name' : adapter.quote(col.column | string),
                         'datatype' : col.data_type,
@@ -36,32 +36,32 @@
                 {#- keep lists of columns to fix -#}
                 {%- do cols_to_coalesce.append(column) -%}
                 {%- do colnames_tofix.append(name_without_datatype) -%}
-            
+
             {%- endif -%}
 
         {%- endif %}
-        
+
         {%- if status == 'innocent' -%}
             {%- do clean_cols.append(col) -%}
         {%- endif -%}
     {%- endfor -%}
 
     {%- for col in clean_cols %}
-        {#- check clean column name against coalesce output and 
+        {#- check clean column name against coalesce output and
         add all unduplicated, unmatched columns to final list -#}
         {%- if col.column not in colnames_tofix %}
             {%- set clean_col = adapter.quote(col.column) -%}
             {%- do finals.append(clean_col) -%}
         {% else -%}
         {#- if clean column has datatyped cousin, add to list for fixing -#}
-            {%- set column = 
+            {%- set column =
                 {
                     'name' : adapter.quote(col.column | string),
                     'datatype' : col.data_type,
                     'name_without_datatype' : adapter.quote(col.column | string)
                 }
             -%}
-            
+
             {%- do cols_to_coalesce.append(column) -%}
         {% endif -%}
     {% endfor %}
@@ -85,8 +85,8 @@
         {%- endset -%}
         {%- do finals.append(column_exp) -%}
     {%- endfor %}
-    
-    
+
+
 select
 
     {% for final in finals %}

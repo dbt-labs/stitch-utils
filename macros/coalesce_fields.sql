@@ -18,7 +18,7 @@
 
             {%- set col_split = col.column.split('__') -%}
             {%- if col_split|length > 1 and col_split[-1]|lower in (
-                'fl','bl','st','it','bigint','string','double','boolean'
+                'de','fl','bl','st','it','bigint','string','double','boolean'
             ) -%}
 
                 {%- set status = 'guilty' -%}

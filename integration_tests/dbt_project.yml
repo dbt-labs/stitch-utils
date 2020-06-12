@@ -1,6 +1,7 @@
 
-name: 'stitch_utils_integration_tests'
-version: '1.0'
+name: stitch_utils_integration_tests
+version: 0.2.0
+config-version: 2
 
 profile: 'integration_tests'
 

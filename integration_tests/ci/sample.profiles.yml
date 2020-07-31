@@ -14,7 +14,7 @@ integration_tests:
       host: "{{ env_var('POSTGRES_TEST_HOST') }}"
       user: "{{ env_var('POSTGRES_TEST_USER') }}"
       pass: "{{ env_var('POSTGRES_TEST_PASS') }}"
-      port: "{{ env_var('POSTGRES_TEST_PORT') }}"
+      port: "{{ env_var('POSTGRES_TEST_PORT') | as_number }}"
       dbname: "{{ env_var('POSTGRES_TEST_DBNAME') }}"
       schema: stitch_utils_integration_tests_postgres
       threads: 1

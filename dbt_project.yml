@@ -7,4 +7,4 @@ clean-targets: ["target", "dbt_modules"]
 macro-paths: ["macros"]
 log-path: "logs"
 
-require-dbt-version: ">=0.17.0"
+require-dbt-version: ">=0.18.0"

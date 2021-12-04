@@ -1,5 +1,5 @@
 name: stitch_utils
-version: 0.3.0
+version: 0.3.1
 config-version: 2
 
 target-path: "target"
@@ -7,4 +7,4 @@ clean-targets: ["target", "dbt_modules"]
 macro-paths: ["macros"]
 log-path: "logs"
 
-require-dbt-version: ">=0.17.0"
+require-dbt-version: [">=0.17.0", "<1.1.0"]

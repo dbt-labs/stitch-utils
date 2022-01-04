@@ -1,3 +1,12 @@
+# stitch-utils 0.4.1
+
+- Add support for `bo` (boolean) type ([#20](https://github.com/dbt-labs/stitch-utils/pull/20))
+- Add support for `decimal` type ([#24](https://github.com/dbt-labs/stitch-utils/pull/24))
+
+### Contributors
+- [@jeremyyeo](https://github.com/jeremyyeo) ([#20](https://github.com/dbt-labs/stitch-utils/pull/20))
+- [@cnlee1702](https://github.com/cnlee1702) ([#24](https://github.com/dbt-labs/stitch-utils/pull/24))
+
 # stitch-utils 0.4.0
 
 This release supports any version (minor and patch) of v1, which means far less need for compatibility releases in the future.

@@ -18,7 +18,7 @@
 
             {%- set col_split = col.column.split('__') -%}
             {%- if col_split|length > 1 and col_split[-1]|lower in (
-                'de','fl','bl','st','it','bigint','string','double','boolean','decimal'
+                'de','fl','bl','st','it','bigint','string','double','decimal','boolean','bo'
             ) -%}
 
                 {%- set status = 'guilty' -%}
@@ -73,7 +73,7 @@
             coalesce(
             {%- for column in group.list -%}
                 {#- handle booleans with especial care -#}
-                {%- if column.datatype == 'boolean' %}
+                {%- if column.datatype in ('boolean', 'bo') %}
                 case
                     when {{column.name}} = true then cast('true' as {{dbt_utils.type_string()}})
                     when {{column.name}} = false then cast('false' as {{dbt_utils.type_string()}})

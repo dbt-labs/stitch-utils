@@ -1,3 +1,10 @@
+# stitch-utils 0.4.2
+
+- Add support for `ti` (timestamp) type ([#26](https://github.com/dbt-labs/stitch-utils/pull/26))
+
+### Contributors
+- [@nathan-protempo](https://github.com/nathan-protempo) ([#26](https://github.com/dbt-labs/stitch-utils/pull/26))
+
 # stitch-utils 0.4.1
 
 - Add support for `bo` (boolean) type ([#20](https://github.com/dbt-labs/stitch-utils/pull/20))

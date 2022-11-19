@@ -75,11 +75,11 @@
                 {#- handle booleans with especial care -#}
                 {%- if column.datatype in ('boolean', 'bo') %}
                 case
-                    when {{column.name}} = true then cast('true' as {{dbt_utils.type_string()}})
-                    when {{column.name}} = false then cast('false' as {{dbt_utils.type_string()}})
+                    when {{column.name}} = true then cast('true' as {{type_string()}})
+                    when {{column.name}} = false then cast('false' as {{type_string()}})
                     else null end
                 {% else %}
-                cast({{column.name}} as {{dbt_utils.type_string()}}){%- endif -%}{{- "," if not loop.last -}}
+                cast({{column.name}} as {{type_string()}}){%- endif -%}{{- "," if not loop.last -}}
             {% endfor -%}
             ) as {{ group.grouper }}
         {%- endset -%}
